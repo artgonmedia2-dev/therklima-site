@@ -46,7 +46,7 @@ export default function Footer() {
                   {[1,2,3,4,5].map((s) => (
                     <Star key={s} className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" aria-hidden="true" />
                   ))}
-                  <span className="text-white text-sm font-bold ml-1.5">4.8</span>
+                  <span className="text-white text-sm font-bold ml-1.5">5/5</span>
                 </div>
                 <p className="text-[#94a3b8] text-xs">156 avis Google</p>
               </div>

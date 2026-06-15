@@ -47,12 +47,12 @@ export default function TestimonialsSection() {
             Ce que disent nos clients
           </h2>
           <div className="flex items-center justify-center gap-2">
-            <div className="flex gap-0.5" aria-label="Note globale 4.8 sur 5">
+            <div className="flex gap-0.5" aria-label="Note globale 5 sur 5">
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" aria-hidden="true" />
               ))}
             </div>
-            <span className="text-[#475569] font-medium">4.8/5 — 156 avis Google</span>
+            <span className="text-[#475569] font-medium">5/5 — 156 avis Google</span>
           </div>
         </motion.div>
 

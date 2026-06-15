@@ -54,7 +54,7 @@ export const TESTIMONIALS = [
     name: "Patrick V.",
     city: "Puteaux",
     metier: "Ventilation",
-    rating: 4,
+    rating: 5,
     text: "Installation d'une VMC double flux dans notre maison. Très bonne qualité d'air depuis. Tarif compétitif et technicien compétent.",
     date: "Mars 2026",
     avatar: "PV",
@@ -65,5 +65,5 @@ export const STATS = [
   { value: "15+", label: "Années d'expérience" },
   { value: "2 500+", label: "Clients satisfaits" },
   { value: "6", label: "Métiers du bâtiment" },
-  { value: "4.8/5", label: "Note Google (156 avis)" },
+  { value: "5/5", label: "Note Google (156 avis)" },
 ];

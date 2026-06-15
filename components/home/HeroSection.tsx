@@ -153,7 +153,7 @@ export default function HeroSection() {
           >
             <div className="flex items-center gap-1.5">
               <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-yellow-400 fill-yellow-400 shrink-0" aria-hidden="true" />
-              <span>4.8/5 (156 avis)</span>
+              <span>5/5 (156 avis)</span>
             </div>
             <span className="hidden sm:block w-px h-4 bg-white/30" aria-hidden="true" />
             <div className="flex items-center gap-1.5">

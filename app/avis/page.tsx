@@ -4,8 +4,8 @@ import { TESTIMONIALS, STATS } from "@/lib/data/testimonials";
 import CTABanner from "@/components/home/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Avis Clients — 4.8/5 sur 156 avis Google",
-  description: "Découvrez les avis de nos clients sur nos services d'électricité, plomberie, chauffage, climatisation, PAC et ventilation. Note moyenne 4.8/5 sur 156 avis.",
+  title: "Avis Clients — 5/5 sur 156 avis Google",
+  description: "Découvrez les avis de nos clients sur nos services d'électricité, plomberie, chauffage, climatisation, PAC et ventilation. Note moyenne 5/5 sur 156 avis.",
 };
 
 export default function AvisPage() {
@@ -14,14 +14,14 @@ export default function AvisPage() {
       {/* Hero */}
       <section className="py-24 md:py-32 bg-[#0f172a]" aria-label="Avis clients">
         <div className="container-custom text-center">
-          <div className="flex justify-center gap-0.5 mb-4" aria-label="Note 4.8 sur 5">
+          <div className="flex justify-center gap-0.5 mb-4" aria-label="Note 5 sur 5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star key={i} className="w-7 h-7 text-yellow-400 fill-yellow-400" aria-hidden="true" />
             ))}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Avis de nos clients</h1>
           <p className="text-white/70 text-lg">
-            <strong className="text-white">4.8/5</strong> de moyenne sur 156 avis Google vérifiés
+            <strong className="text-white">5/5</strong> de moyenne sur 156 avis Google vérifiés
           </p>
         </div>
       </section>
