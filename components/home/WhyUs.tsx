@@ -72,22 +72,22 @@ export default function WhyUs() {
           <span className="inline-block px-3 py-1 bg-[#e6f6fc] text-[#0da2e1] text-sm font-semibold rounded-full mb-4">
             Pourquoi nous choisir
           </span>
-          <h2 id="why-heading" className="text-3xl md:text-4xl font-bold text-[#0f172a] mb-4">
+          <h2 id="why-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0f172a] mb-3 md:mb-4">
             Pourquoi choisir Therklima ?
           </h2>
-          <p className="text-[#475569] text-lg max-w-2xl mx-auto">
+          <p className="text-[#475569] text-base md:text-lg max-w-2xl mx-auto">
             Notre engagement : qualité, réactivité et transparence. 8 raisons de nous faire confiance.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {ARGUMENTS.map((arg, i) => (
             <motion.div
               key={arg.title}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.07 }}
-              className="group bg-[#f8fafc] hover:bg-white border border-gray-100 hover:border-gray-200 hover:shadow-md rounded-2xl p-5 transition-all duration-300"
+              className="group bg-[#f8fafc] hover:bg-white border border-gray-100 hover:border-gray-200 hover:shadow-md rounded-2xl p-4 md:p-5 transition-all duration-300"
             >
               <div
                 className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110"

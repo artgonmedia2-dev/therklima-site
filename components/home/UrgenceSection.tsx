@@ -59,23 +59,26 @@ export default function UrgenceSection() {
         </motion.div>
 
         {/* Urgence Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
           {URGENCES.map((u, i) => (
             <motion.div
               key={u.metier}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-colors"
+              className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 hover:bg-white/10 transition-colors"
             >
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                style={{ backgroundColor: u.color + "20" }}
-              >
-                <u.icon className="w-6 h-6" style={{ color: u.color }} aria-hidden="true" />
+              {/* Mobile: horizontal header */}
+              <div className="flex items-center gap-3 mb-3 md:mb-0 md:block">
+                <div
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shrink-0 md:mb-4"
+                  style={{ backgroundColor: u.color + "20" }}
+                >
+                  <u.icon className="w-5 h-5 md:w-6 md:h-6" style={{ color: u.color }} aria-hidden="true" />
+                </div>
+                <h3 className="text-base md:text-lg font-bold text-white md:mb-3">Urgence {u.metier}</h3>
               </div>
-              <h3 className="text-lg font-bold text-white mb-3">Urgence {u.metier}</h3>
-              <ul className="space-y-1.5 mb-5" role="list">
+              <ul className="space-y-1.5 mb-4 md:mb-5" role="list">
                 {u.situations.map((s) => (
                   <li key={s} className="flex items-center gap-2 text-sm text-white/70">
                     <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: u.color }} aria-hidden="true" />
@@ -85,7 +88,7 @@ export default function UrgenceSection() {
               </ul>
               <a
                 href={COMPANY.phoneHref}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:scale-105"
+                className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all active:scale-95 md:hover:scale-105 md:w-auto"
                 style={{ backgroundColor: u.color }}
                 aria-label={`Appeler pour une urgence ${u.metier}`}
               >
@@ -106,10 +109,10 @@ export default function UrgenceSection() {
           <p className="text-white/70 text-sm mb-3">Ligne urgence disponible 24h/24, 7j/7</p>
           <a
             href={COMPANY.phoneHref}
-            className="inline-flex items-center gap-3 px-8 py-5 bg-red-500 hover:bg-red-600 text-white font-bold text-xl rounded-2xl transition-all hover:scale-105 shadow-xl shadow-red-500/30"
+            className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-6 sm:px-8 py-4 sm:py-5 bg-red-500 hover:bg-red-600 text-white font-bold text-lg sm:text-xl rounded-2xl transition-all active:scale-95 md:hover:scale-105 shadow-xl shadow-red-500/30"
             aria-label={`Numéro d'urgence Therklima : ${COMPANY.phone}`}
           >
-            <Phone className="w-7 h-7" aria-hidden="true" />
+            <Phone className="w-6 h-6 sm:w-7 sm:h-7" aria-hidden="true" />
             {COMPANY.phone}
           </a>
         </motion.div>

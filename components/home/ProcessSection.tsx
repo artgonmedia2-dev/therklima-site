@@ -59,7 +59,7 @@ export default function ProcessSection() {
 
         {/* Steps */}
         <div className="relative">
-          {/* Connecting line */}
+          {/* Connecting line — desktop only */}
           <div
             className="hidden lg:block absolute top-12 left-[calc(12.5%+2rem)] right-[calc(12.5%+2rem)] h-0.5 bg-gray-200"
             aria-hidden="true"
@@ -72,25 +72,33 @@ export default function ProcessSection() {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Vertical line — mobile only */}
+          <div className="lg:hidden absolute left-8 sm:left-[calc(25%-1rem)] top-8 bottom-8 w-0.5 bg-gray-200" aria-hidden="true" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
             {STEPS.map((step, i) => (
               <motion.div
                 key={step.num}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: i * 0.15 }}
-                className="relative flex flex-col items-center text-center"
+                className="relative flex items-start lg:flex-col lg:items-center lg:text-center gap-4 lg:gap-0"
               >
-                {/* Circle */}
-                <div className="relative z-10 w-16 h-16 rounded-full bg-[#0da2e1] flex flex-col items-center justify-center mb-5 shadow-lg shadow-[#0da2e1]/30">
-                  <step.icon className="w-7 h-7 text-white" aria-hidden="true" />
+                {/* Circle + number */}
+                <div className="relative shrink-0">
+                  <div className="relative z-10 w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-[#0da2e1] flex items-center justify-center shadow-lg shadow-[#0da2e1]/30 lg:mb-5">
+                    <step.icon className="w-6 h-6 lg:w-7 lg:h-7 text-white" aria-hidden="true" />
+                  </div>
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 lg:w-6 lg:h-6 rounded-full bg-[#0878a8] text-white text-[10px] lg:text-xs font-bold flex items-center justify-center shadow">
+                    {i + 1}
+                  </span>
                 </div>
-                <span className="absolute top-0 right-0 lg:right-auto lg:left-10 w-6 h-6 rounded-full bg-[#0878a8] text-white text-xs font-bold flex items-center justify-center">
-                  {i + 1}
-                </span>
 
-                <h3 className="text-lg font-bold text-[#0f172a] mb-2">{step.title}</h3>
-                <p className="text-sm text-[#64748b] leading-relaxed">{step.desc}</p>
+                {/* Text */}
+                <div className="lg:text-center">
+                  <h3 className="text-base lg:text-lg font-bold text-[#0f172a] mb-1 lg:mb-2">{step.title}</h3>
+                  <p className="text-sm text-[#64748b] leading-relaxed">{step.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>

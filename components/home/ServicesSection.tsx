@@ -33,10 +33,10 @@ export default function ServicesSection() {
           <span className="inline-block px-3 py-1 bg-[#e6f6fc] text-[#0da2e1] text-sm font-semibold rounded-full mb-4">
             Nos 6 expertises
           </span>
-          <h2 id="services-heading" className="text-3xl md:text-4xl font-bold text-[#0f172a] mb-4">
+          <h2 id="services-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0f172a] mb-3 md:mb-4">
             Des solutions complètes pour votre confort
           </h2>
-          <p className="text-[#475569] text-lg max-w-2xl mx-auto">
+          <p className="text-[#475569] text-base md:text-lg max-w-2xl mx-auto">
             6 métiers du bâtiment, un seul interlocuteur. Therklima prend en charge tous vos travaux d&apos;installation, de rénovation et de dépannage.
           </p>
         </motion.div>

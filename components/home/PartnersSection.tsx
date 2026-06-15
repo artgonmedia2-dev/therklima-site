@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CheckCircle2, Flame, ShieldCheck } from "lucide-react";
 
 const QUALIFICATIONS = [
   { src: "/qualifs/qualifelec-rge.png", alt: "Qualifelec — Reconnu Garant de l'Environnement", label: "Qualifelec RGE" },
@@ -78,7 +79,7 @@ export default function PartnersSection() {
               {PARTENAIRES_ELEC.map((p) => (
                 <div
                   key={p.src}
-                  className="relative h-14 w-32 grayscale hover:grayscale-0 transition-all duration-300"
+                  className="relative h-14 w-32 transition-all duration-300"
                 >
                   <Image
                     src={p.src}
@@ -102,7 +103,7 @@ export default function PartnersSection() {
               {PARTENAIRES_CLIMA.map((p) => (
                 <div
                   key={p.src}
-                  className="relative h-14 w-32 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-300"
+                  className="relative h-14 w-32 flex items-center justify-center transition-all duration-300"
                 >
                   <Image
                     src={p.src}
@@ -113,6 +114,66 @@ export default function PartnersSection() {
                   />
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Qualigaz — Partenaire Agréé Gaz (featured card) */}
+        <div className="mt-10 relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1a0a00] via-[#3d1a00] to-[#6b2f00] shadow-xl">
+          {/* Decorative circles */}
+          <div className="absolute -top-10 -right-10 w-52 h-52 rounded-full bg-[#ff8c00]/10 pointer-events-none" aria-hidden="true" />
+          <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-[#ff8c00]/8 pointer-events-none" aria-hidden="true" />
+
+          <div className="relative z-10 p-7 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-12">
+            {/* Left — badge + logo */}
+            <div className="flex flex-col items-center gap-4 shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ff8c00]/20 border border-[#ff8c00]/30 text-[#ffb347] text-xs font-semibold uppercase tracking-wide">
+                <Flame className="w-3.5 h-3.5" aria-hidden="true" />
+                Partenaire Agréé Gaz
+              </span>
+              <div className="bg-white rounded-2xl shadow-lg p-4 w-44 h-24 relative">
+                <Image
+                  src="/qualigaz.webp"
+                  alt="Professionnel du Gaz — Installation & Maintenance"
+                  fill
+                  className="object-contain p-2"
+                  sizes="176px"
+                />
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block w-px h-28 bg-white/10 shrink-0" aria-hidden="true" />
+
+            {/* Right — content */}
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                Professionnel du Gaz — Installation &amp; Maintenance
+              </h3>
+              <p className="text-[#ffd6a0] text-sm leading-relaxed mb-5 max-w-lg">
+                Therklima est partenaire agréé <strong className="text-white">PG</strong>, garantissant des installations
+                et maintenances gaz conformes aux normes de sécurité en vigueur.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center md:items-start gap-3 sm:gap-6">
+                {[
+                  "Installations conformes DTU 61.1",
+                  "Sécurité gaz certifiée",
+                  "Dépannage & entretien chaudières",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#ff8c00] shrink-0" aria-hidden="true" />
+                    <span className="text-sm text-[#ffd6a0]">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right corner badge */}
+            <div className="hidden lg:flex flex-col items-center justify-center shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-[#ff8c00]/20 border border-[#ff8c00]/30 flex items-center justify-center">
+                <ShieldCheck className="w-8 h-8 text-[#ff8c00]" aria-hidden="true" />
+              </div>
+              <span className="text-xs text-[#ffb347] mt-2 font-semibold text-center leading-tight">Agréé<br />Qualigaz</span>
             </div>
           </div>
         </div>
