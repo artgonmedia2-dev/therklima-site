@@ -2,14 +2,21 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Zap, Wind, ChevronRight, ChevronLeft, Send, CheckCircle2 } from "lucide-react";
+import { Zap, Wind, ChevronRight, ChevronLeft, Send, CheckCircle2, AlertTriangle, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { COMPANY } from "@/lib/constants";
 
-type Tab = "electricite" | "climatisation";
+type Tab = "electricite" | "climatisation" | "urgence";
 
 const ELEC_ACCENT = "#ff8c00";
 const CLIMA_ACCENT = "#00bcd4";
+const URGENCE_ACCENT = "#ef4444";
+
+const URGENCE_STEPS = [
+  "Type d'urgence",
+  "Décrivez le problème",
+  "Vos coordonnées",
+];
 
 const ELEC_STEPS = [
   "Nature de l'intervention souhaitée",
@@ -231,6 +238,12 @@ export default function DevisTabsSection() {
   const [climaCreneaux, setClimaCreneaux] = useState<string[]>([]);
   const [climaAutreCreneaux, setClimaAutreCreneaux] = useState("");
 
+  // ── Urgence state ──
+  const [urgenceType, setUrgenceType] = useState<string[]>([]);
+  const [urgenceSymptomes, setUrgenceSymptomes] = useState<string[]>([]);
+  const [urgenceAutre, setUrgenceAutre] = useState("");
+  const [urgenceDescription, setUrgenceDescription] = useState("");
+
   // ── Shared contact ──
   const [contact, setContact] = useState<ContactState>({
     prenom: "", nom: "", telephone: "", email: "", adresse: "", rgpd: false,
@@ -238,25 +251,18 @@ export default function DevisTabsSection() {
 
   // ── Derived values ──
   const isElec = tab === "electricite";
-  const accent = isElec ? ELEC_ACCENT : CLIMA_ACCENT;
-  const stepTitles = isElec ? ELEC_STEPS : CLIMA_STEPS;
+  const isUrgence = tab === "urgence";
+  const accent = isElec ? ELEC_ACCENT : isUrgence ? URGENCE_ACCENT : CLIMA_ACCENT;
+  const stepTitles = isElec ? ELEC_STEPS : isUrgence ? URGENCE_STEPS : CLIMA_STEPS;
   const totalSteps = stepTitles.length;
   const progress = Math.round(((step + 1) / totalSteps) * 100);
   const isLastStep = step === totalSteps - 1;
 
   const certBadge = isElec
-    ? {
-        src: "/qualifs/qualifelec-rge.png",
-        title: "Artisan certifié Qualifelec",
-        sub: "Travaux électriques conformes NF C 15-100",
-        bgClass: "bg-blue-50 border-blue-100",
-      }
-    : {
-        src: "/qualifs/rge-qualipac.png",
-        title: "Technicien certifié RGE QualiPac",
-        sub: "Installation & maintenance pompes à chaleur",
-        bgClass: "bg-cyan-50 border-cyan-100",
-      };
+    ? { src: "/qualifs/qualifelec-rge.png", title: "Artisan certifié Qualifelec", sub: "Travaux électriques conformes NF C 15-100", bgClass: "bg-blue-50 border-blue-100" }
+    : isUrgence
+    ? { src: "/qualifs/qualifelec-rge.png", title: "Urgence 24h/24 — 7j/7", sub: "Intervention en moins d'1 heure sur Paris & IDF", bgClass: "bg-red-50 border-red-100" }
+    : { src: "/qualifs/rge-qualipac.png", title: "Technicien certifié RGE QualiPac", sub: "Installation & maintenance pompes à chaleur", bgClass: "bg-cyan-50 border-cyan-100" };
 
   // ── Handlers ──
   const handleTabChange = (t: Tab) => {
@@ -278,9 +284,10 @@ export default function DevisTabsSection() {
     setIsSubmitting(true);
     try {
       await new Promise(r => setTimeout(r, 1200));
-      toast.success("Demande envoyée ! Nous vous contactons sous 24h.", {
-        description: `Un technicien vous rappellera au ${contact.telephone}.`,
-      });
+      toast.success(
+        isUrgence ? "Urgence reçue ! Un technicien vous rappelle sous 5 min." : "Demande envoyée ! Nous vous contactons sous 24h.",
+        { description: `Nous vous rappellerons au ${contact.telephone}.` }
+      );
       setSubmitted(true);
     } catch {
       toast.error("Erreur lors de l'envoi. Réessayez ou appelez-nous directement.");
@@ -468,6 +475,65 @@ export default function DevisTabsSection() {
     }
   };
 
+  // ── Urgence step renderer ──
+  const renderUrgenceStep = () => {
+    switch (step) {
+      case 0:
+        return (
+          <div className="space-y-4">
+            <ToggleChips
+              options={["Panne électrique", "Fuite d'eau", "Panne de chauffage", "Odeur de gaz", "Coupure eau chaude", "Court-circuit", "Dégât des eaux", "Autre urgence"]}
+              selected={urgenceType} onChange={setUrgenceType} accent={URGENCE_ACCENT}
+            />
+            {/* Big call button */}
+            <a
+              href={COMPANY.phoneHref}
+              className="mt-4 flex items-center justify-center gap-3 w-full py-4 rounded-2xl font-bold text-white text-base shadow-lg shadow-red-500/20 transition-all active:scale-95"
+              style={{ background: "linear-gradient(135deg, #ef4444, #b91c1c)" }}
+              aria-label={`Appel urgence : ${COMPANY.phone}`}
+            >
+              <Phone className="w-5 h-5 animate-pulse" aria-hidden="true" />
+              Urgence ? Appelez maintenant — {COMPANY.phone}
+            </a>
+          </div>
+        );
+      case 1:
+        return (
+          <div className="space-y-4">
+            <ToggleChips
+              options={["Fuite importante", "Pas d'eau", "Disjoncteur qui saute", "Pas de chauffage", "Odeur suspecte", "Inondation", "Prise / interrupteur HS", "Ballon d'eau chaude en panne"]}
+              selected={urgenceSymptomes} onChange={setUrgenceSymptomes} accent={URGENCE_ACCENT}
+              withOther otherValue={urgenceAutre} onOtherChange={setUrgenceAutre}
+              placeholder="Décrivez votre urgence..."
+            />
+            <div>
+              <label className="block text-xs font-semibold text-[#94a3b8] uppercase tracking-wide mb-2">
+                Informations complémentaires (optionnel)
+              </label>
+              <textarea
+                value={urgenceDescription}
+                onChange={e => setUrgenceDescription(e.target.value)}
+                placeholder="Décrivez brièvement la situation pour que notre technicien soit préparé à son arrivée..."
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-400/20 resize-none transition-colors"
+              />
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-100 rounded-xl mb-2">
+              <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" aria-hidden="true" />
+              <p className="text-xs text-red-700 font-medium">Un technicien vous rappelle dans les 5 minutes.</p>
+            </div>
+            <ContactFields contact={contact} setContact={setContact} errors={contactErrors} />
+          </div>
+        );
+      default: return null;
+    }
+  };
+
   // ── Success screen ──
   if (submitted) {
     return (
@@ -520,28 +586,31 @@ export default function DevisTabsSection() {
           </p>
         </div>
 
-        {/* Tab switcher */}
-        <div className="grid grid-cols-2 gap-2 p-2 bg-[#f1f5f9] rounded-2xl mb-6">
+        {/* Tab switcher — 3 tabs */}
+        <div className="grid grid-cols-3 gap-1.5 p-1.5 bg-[#f1f5f9] rounded-2xl mb-6">
           {([
-            { key: "electricite" as Tab, label: "Électricité", Icon: Zap },
-            { key: "climatisation" as Tab, label: "Climatisation", Icon: Wind },
-          ] as const).map(({ key, label, Icon }) => (
+            { key: "electricite" as Tab, label: "Électricité", Icon: Zap, accent: ELEC_ACCENT },
+            { key: "climatisation" as Tab, label: "Climatisation", Icon: Wind, accent: CLIMA_ACCENT },
+            { key: "urgence" as Tab, label: "Urgence 24h", Icon: AlertTriangle, accent: URGENCE_ACCENT },
+          ] as const).map(({ key, label, Icon, accent: tabAccent }) => (
             <button
               key={key}
               type="button"
               onClick={() => handleTabChange(key)}
-              className={`flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+              className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-2.5 sm:py-3 px-1 rounded-xl font-semibold text-xs sm:text-sm transition-all duration-200 ${
                 tab === key
-                  ? "bg-white shadow-sm text-[#0f172a]"
+                  ? key === "urgence"
+                    ? "bg-red-500 shadow-sm text-white shadow-red-500/30"
+                    : "bg-white shadow-sm text-[#0f172a]"
                   : "text-[#64748b] hover:text-[#334155]"
               }`}
             >
               <Icon
-                className="w-4 h-4"
-                style={{ color: tab === key ? (key === "electricite" ? ELEC_ACCENT : CLIMA_ACCENT) : "#94a3b8" }}
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"
+                style={{ color: tab === key ? (key === "urgence" ? "#fff" : tabAccent) : "#94a3b8" }}
                 aria-hidden="true"
               />
-              {label}
+              <span className="leading-tight text-center">{label}</span>
             </button>
           ))}
         </div>
@@ -568,7 +637,7 @@ export default function DevisTabsSection() {
           <h3 className="text-base font-bold text-[#0f172a] mb-5">
             {stepTitles[step]}
           </h3>
-          {isElec ? renderElecStep() : renderClimaStep()}
+          {isElec ? renderElecStep() : isUrgence ? renderUrgenceStep() : renderClimaStep()}
         </div>
 
         {/* Progress + Navigation */}
