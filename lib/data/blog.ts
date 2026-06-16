@@ -9,7 +9,7 @@ export const BLOG_ARTICLES = [
     metierColor: "#4caf50",
     readTime: "8 min",
     date: "2026-05-15",
-    image: "/images/blog/pac-guide.jpg",
+    image: "/blog/pac-guide.jpeg",
     alt: "Pompe à chaleur air-eau installée à l'extérieur d'une maison",
     content: `
 # Guide complet : Pompe à Chaleur 2026
@@ -48,7 +48,7 @@ Une PAC air-eau consomme 3 à 4x moins d'électricité qu'une chaudière électr
     metierColor: "#ff8c00",
     readTime: "6 min",
     date: "2026-04-20",
-    image: "/images/blog/electricite-conformite.jpg",
+    image: "/blog/elec-norme.jpeg",
     alt: "Tableau électrique avec disjoncteurs différentiels modernes",
     content: `
 # Conformité électrique : la norme NF C 15-100
@@ -87,7 +87,7 @@ Entre 1 500€ et 5 000€ pour un appartement selon son état.
     metierColor: "#9c27b0",
     readTime: "5 min",
     date: "2026-03-10",
-    image: "/images/blog/vmc-double-flux.jpg",
+    image: "/blog/vmc-double-flux.jpeg",
     alt: "Caisson VMC double flux avec échangeur thermique",
     content: `
 # VMC Double Flux : tout ce qu'il faut savoir

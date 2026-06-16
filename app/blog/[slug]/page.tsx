@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { BLOG_ARTICLES } from "@/lib/data/blog";
 import { Clock, ArrowLeft, Tag } from "lucide-react";
 import CTABanner from "@/components/home/CTABanner";
@@ -49,13 +50,22 @@ export default async function BlogArticlePage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_SCHEMA) }} />
 
       {/* Hero */}
-      <section
-        className="py-24 md:py-32"
-        style={{ background: `linear-gradient(135deg, #0f172a, ${article.metierColor}40)` }}
-        aria-label={`Article : ${article.title}`}
-      >
-        <div className="container-custom max-w-3xl">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm mb-6 transition-colors">
+      <section className="relative min-h-[380px] md:min-h-[420px] flex items-end overflow-hidden" aria-label={`Article : ${article.title}`}>
+        {/* Background photo */}
+        <div className="absolute inset-0">
+          <Image
+            src={article.image}
+            alt={article.alt}
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, rgba(15,23,42,0.5) 0%, rgba(15,23,42,0.85) 100%)` }} />
+        </div>
+        {/* Content */}
+        <div className="relative z-10 container-custom max-w-3xl py-12 md:py-16">
+          <Link href="/blog" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm mb-5 transition-colors">
             <ArrowLeft className="w-4 h-4" aria-hidden="true" /> Retour au blog
           </Link>
           <span
@@ -65,7 +75,7 @@ export default async function BlogArticlePage({ params }: Props) {
             {article.metierName}
           </span>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">{article.title}</h1>
-          <div className="flex items-center gap-4 text-white/60 text-sm">
+          <div className="flex items-center gap-4 text-white/70 text-sm">
             <span>{new Date(article.date).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" })}</span>
             <span className="flex items-center gap-1">
               <Clock className="w-4 h-4" aria-hidden="true" /> {article.readTime} de lecture

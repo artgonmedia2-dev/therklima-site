@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { BLOG_ARTICLES } from "@/lib/data/blog";
 import { Clock, ArrowRight } from "lucide-react";
 import CTABanner from "@/components/home/CTABanner";
@@ -29,19 +30,19 @@ export default function BlogPage() {
           <h2 id="blog-heading" className="text-3xl font-bold text-[#0f172a] mb-8">Derniers articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {BLOG_ARTICLES.map((article) => (
-              <article key={article.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                {/* Image placeholder */}
-                <div
-                  className="h-44 relative flex items-center justify-center"
-                  style={{ backgroundColor: article.metierColor + "15" }}
-                  role="img"
-                  aria-label={article.alt}
-                >
-                  <span className="text-6xl font-bold opacity-15" style={{ color: article.metierColor }}>
-                    {article.metierName.charAt(0)}
-                  </span>
+              <article key={article.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                {/* Photo */}
+                <div className="relative h-52 overflow-hidden">
+                  <Image
+                    src={article.image}
+                    alt={article.alt}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                   <span
-                    className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-white text-xs font-semibold"
+                    className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-white text-xs font-semibold shadow-sm"
                     style={{ backgroundColor: article.metierColor }}
                   >
                     {article.metierName}
