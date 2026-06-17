@@ -23,9 +23,9 @@ export default function HomePage() {
       {/* dark → white → f8fafc → white → f8fafc → white → dark (break) → f8fafc → white → f8fafc → dark */}
       <HeroSection />        {/* dark gradient */}
       <SocialProof />        {/* white */}
-      <ServicesSection />    {/* f8fafc */}
-      <WhyUs />              {/* white */}
       <PartnersSection />    {/* f8fafc */}
+      <ServicesSection />    {/* white */}
+      <WhyUs />              {/* f8fafc */}
       <ProcessSection />     {/* white ← fixed */}
       <UrgenceSection />     {/* dark gradient — break visuel */}
       <DevisTabsSection />   {/* f8fafc */}
