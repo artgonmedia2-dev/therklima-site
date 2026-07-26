@@ -154,7 +154,7 @@ export default function Footer() {
       <div className="border-t border-[#1e293b]">
         <div className="container-custom py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-[#64748b]">
-            © {currentYear} Therklima — Tous droits réservés. Réalisé par <span className="text-[#0da2e1] font-medium">artgonMEDIA</span>
+            © {currentYear} Therklima — Tous droits réservés. Réalisation par <span className="text-[#0da2e1] font-medium">THERKLIMA</span>
           </p>
           <div className="flex items-center gap-4">
             {[
