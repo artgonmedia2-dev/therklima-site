@@ -136,17 +136,38 @@ export default function DevisClimatisationForm() {
       hauteur,
       jours,
       creneaux: autreCreneaux ? [...creneaux, `Autre: ${autreCreneaux}`] : creneaux,
-      ...contact,
     };
-    await new Promise((r) => setTimeout(r, 1200));
-    console.log("Demande climatisation:", payload);
-    toast.success("Demande envoyée ! Nous vous contactons sous 24h.", { description: `Un technicien vous rappellera au ${contact.telephone}.` });
-    // Reset all
-    setNatureIntervention([]); setTypeDemande([]); setTypeEquipement([]);
-    setConfiguration([]); setConfigAutre(""); setMarque([]); setMarqueAutre("");
-    setSymptomes([]); setSymptomesAutre(""); setTypeBatiment([]); setBatimentAutre("");
-    setSurface(""); setHauteur(""); setJours([]); setCreneaux([]); setAutreCreneaux("");
-    reset();
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "devis-climatisation",
+          nom: contact.nom,
+          prenom: contact.prenom,
+          email: contact.email,
+          telephone: contact.telephone,
+          adresse: contact.adresse,
+          details: payload,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Erreur lors de l'envoi");
+      }
+
+      toast.success("Demande envoyée ! Nous vous contactons sous 24h.", { description: `Un technicien vous rappellera au ${contact.telephone}.` });
+      // Reset all
+      setNatureIntervention([]); setTypeDemande([]); setTypeEquipement([]);
+      setConfiguration([]); setConfigAutre(""); setMarque([]); setMarqueAutre("");
+      setSymptomes([]); setSymptomesAutre(""); setTypeBatiment([]); setBatimentAutre("");
+      setSurface(""); setHauteur(""); setJours([]); setCreneaux([]); setAutreCreneaux("");
+      reset();
+    } catch (err: any) {
+      toast.error("Erreur d'envoi : " + (err.message || "Veuillez réessayer plus tard."));
+    }
   };
 
   return (

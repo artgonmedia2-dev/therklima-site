@@ -283,14 +283,66 @@ export default function DevisTabsSection() {
 
     setIsSubmitting(true);
     try {
-      await new Promise(r => setTimeout(r, 1200));
+      const details = isUrgence
+        ? {
+            tab,
+            typeUrgence: urgenceType,
+            symptomes: urgenceSymptomes,
+            autre: urgenceAutre,
+            description: urgenceDescription,
+          }
+        : isElec
+        ? {
+            tab,
+            natureIntervention: elecNature,
+            typeDemande: elecTypeDemande,
+            typeBatiment: elecBatiment,
+            puissance: elecPuissance,
+            travauxInstallation: elecTravauxInstall,
+            travauxDepannage: elecDepannage,
+            surface: elecSurface,
+            hauteur: elecHauteur,
+          }
+        : {
+            tab,
+            natureIntervention: climaNature,
+            typeDemande: climaTypeDemande,
+            equipement: climaEquipement,
+            configuration: climaConfig,
+            marque: climaMarque,
+            symptomes: climaSymptomes,
+            typeBatiment: climaBatiment,
+            surface: climaSurface,
+            hauteur: climaHauteur,
+          };
+
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "devis-tabs",
+          subject: isUrgence ? `[URGENCE] Demande d'intervention de ${contact.prenom} ${contact.nom}` : `[Devis Express] Demande de ${contact.prenom} ${contact.nom}`,
+          nom: contact.nom,
+          prenom: contact.prenom,
+          email: contact.email,
+          telephone: contact.telephone,
+          adresse: contact.adresse,
+          details,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Erreur lors de l'envoi");
+      }
+
       toast.success(
         isUrgence ? "Urgence reçue ! Un technicien vous rappelle sous 5 min." : "Demande envoyée ! Nous vous contactons sous 24h.",
         { description: `Nous vous rappellerons au ${contact.telephone}.` }
       );
       setSubmitted(true);
-    } catch {
-      toast.error("Erreur lors de l'envoi. Réessayez ou appelez-nous directement.");
+    } catch (err: any) {
+      toast.error("Erreur lors de l'envoi : " + (err.message || "Réessayez ou appelez-nous directement."));
     } finally {
       setIsSubmitting(false);
     }

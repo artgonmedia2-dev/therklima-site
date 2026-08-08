@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, CheckCircle2, Zap, Droplets, Flame, Snowflake, Thermometer, Wind, Upload, Loader2, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Zap, Droplets, Flame, Snowflake, Thermometer, Wind, Upload, Loader2, X, type LucideIcon } from "lucide-react";
 import { METIERS } from "@/lib/constants";
 
 // ─── Schemas Zod par étape ───────────────────────────────────────────────────
@@ -55,7 +55,19 @@ const METIER_ICONS: Record<string, LucideIcon> = {
   ventilation: Wind,
 };
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+interface PhotoFile {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  base64: string;
+  preview: string;
+}
+
+const MAX_PHOTOS = 3;
+const MAX_SIZE_MB = 5;
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 const STORAGE_KEY = "therklima_devis_draft";
 
@@ -63,6 +75,95 @@ export default function DevisWizard() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  // Photos state
+  const [photos, setPhotos] = useState<PhotoFile[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const processFiles = (fileList: FileList | File[]) => {
+    const newFiles = Array.from(fileList);
+    if (photos.length + newFiles.length > MAX_PHOTOS) {
+      toast.error(`Vous ne pouvez pas ajouter plus de ${MAX_PHOTOS} photos au total.`);
+    }
+
+    const availableSlots = MAX_PHOTOS - photos.length;
+    if (availableSlots <= 0) return;
+
+    const filesToProcess = newFiles.slice(0, availableSlots);
+
+    filesToProcess.forEach((file) => {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast.error(`Format non supporté pour "${file.name}". Formats acceptés : PNG, JPG, WEBP.`);
+        return;
+      }
+
+      if (file.size > MAX_SIZE_BYTES) {
+        toast.error(`Le fichier "${file.name}" dépasse la taille maximale de ${MAX_SIZE_MB} Mo.`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        if (base64) {
+          setPhotos((prev) => {
+            if (prev.length >= MAX_PHOTOS) return prev;
+            return [
+              ...prev,
+              {
+                id: Math.random().toString(36).substring(2, 9),
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                base64,
+                preview: base64,
+              },
+            ];
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
+      e.target.value = "";
+    }
+  };
+
+  const removePhoto = (id: string) => {
+    setPhotos((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
+  };
 
   // Form data accumulator
   const [formData, setFormData] = useState<{
@@ -161,13 +262,42 @@ export default function DevisWizard() {
   const onStep4 = form4.handleSubmit(async (data) => {
     const final = { ...formData, ...data };
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
-    console.log("Devis soumis :", final);
-    localStorage.removeItem(STORAGE_KEY);
-    setIsSubmitting(false);
-    setSubmitted(true);
-    toast.success("Demande envoyée ! Nous vous répondons sous 24h.", { duration: 6000 });
+    try {
+      const { nom, prenom, email, telephone, adresse, codePostal, ville, ...details } = final;
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "devis",
+          nom,
+          prenom,
+          email,
+          telephone,
+          adresse,
+          codePostal,
+          ville,
+          details,
+          photos: photos.map((p) => ({
+            filename: p.name,
+            content: p.base64,
+            contentType: p.type,
+          })),
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Erreur lors de l'envoi");
+      }
+
+      localStorage.removeItem(STORAGE_KEY);
+      setSubmitted(true);
+      toast.success("Demande envoyée ! Nous vous répondons sous 24h.", { duration: 6000 });
+    } catch (err: any) {
+      toast.error("Erreur d'envoi : " + (err.message || "Veuillez réessayer plus tard."));
+    } finally {
+      setIsSubmitting(false);
+    }
   });
 
   const goBack = () => {
@@ -189,7 +319,7 @@ export default function DevisWizard() {
           Nous vous contactons sous <strong>24h</strong> au <strong>{formData.telephone}</strong> ou par email à <strong>{formData.email}</strong>.
         </p>
         <button
-          onClick={() => { setSubmitted(false); setStep(1); setFormData({}); }}
+          onClick={() => { setSubmitted(false); setStep(1); setFormData({}); setPhotos([]); }}
           className="px-6 py-3 bg-[#0da2e1] hover:bg-[#0878a8] text-white rounded-xl font-semibold transition-colors"
         >
           Nouvelle demande
@@ -377,14 +507,74 @@ export default function DevisWizard() {
                 )}
               </div>
 
-              {/* Photos upload placeholder */}
+              {/* Photos upload component */}
               <div>
-                <label className="block text-sm font-semibold text-[#0f172a] mb-1.5">Photos (optionnel)</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-[#0da2e1]/50 transition-colors cursor-pointer">
-                  <Upload className="w-8 h-8 text-gray-300 mx-auto mb-2" aria-hidden="true" />
-                  <p className="text-sm text-[#64748b]">Glissez vos photos ici ou <span className="text-[#0da2e1] font-medium">parcourir</span></p>
-                  <p className="text-xs text-gray-400 mt-1">PNG, JPG jusqu&apos;à 5 Mo — max 3 photos</p>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-semibold text-[#0f172a]">
+                    Photos (optionnel)
+                  </label>
+                  {photos.length > 0 && (
+                    <span className="text-xs text-[#0da2e1] font-medium">
+                      {photos.length} / {MAX_PHOTOS} photo{photos.length > 1 ? "s" : ""}
+                    </span>
+                  )}
                 </div>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,image/webp"
+                  multiple
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+
+                {/* Previews */}
+                {photos.length > 0 && (
+                  <div className="grid grid-cols-3 gap-3 mb-3">
+                    {photos.map((photo) => (
+                      <div key={photo.id} className="relative group border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm flex flex-col items-center p-2 text-center">
+                        <div className="w-full h-24 relative rounded-lg overflow-hidden bg-gray-100 mb-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={photo.preview} alt={photo.name} className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => removePhoto(photo.id)}
+                            className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-md transition-transform transform hover:scale-110"
+                            title="Supprimer la photo"
+                          >
+                            <X className="w-3.5 h-3.5" aria-hidden="true" />
+                          </button>
+                        </div>
+                        <p className="text-xs font-medium text-[#0f172a] truncate w-full px-1" title={photo.name}>{photo.name}</p>
+                        <p className="text-[10px] text-gray-400">{formatFileSize(photo.size)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Dropzone */}
+                {photos.length < MAX_PHOTOS && (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer ${
+                      isDragging
+                        ? "border-[#0da2e1] bg-[#e6f6fc]"
+                        : "border-gray-200 hover:border-[#0da2e1]/50 bg-white"
+                    }`}
+                  >
+                    <Upload className={`w-8 h-8 mx-auto mb-2 transition-colors ${isDragging ? "text-[#0da2e1]" : "text-gray-300"}`} aria-hidden="true" />
+                    <p className="text-sm text-[#64748b]">
+                      Glissez vos photos ici ou <span className="text-[#0da2e1] font-medium underline">parcourir</span>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      PNG, JPG, WEBP jusqu&apos;à 5 Mo — max {MAX_PHOTOS} photos ({MAX_PHOTOS - photos.length} restante{MAX_PHOTOS - photos.length > 1 ? "s" : ""})
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 pt-2">

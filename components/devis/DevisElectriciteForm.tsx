@@ -168,18 +168,39 @@ export default function DevisElectriciteForm() {
         : travauxDepannage,
       jours,
       creneaux: autreCreneaux ? [...creneaux, `Autre: ${autreCreneaux}`] : creneaux,
-      ...contact,
     };
-    await new Promise((r) => setTimeout(r, 1200));
-    console.log("Demande électricité:", payload);
-    toast.success("Demande envoyée ! Nous vous contactons sous 24h.", {
-      description: `Un électricien vous rappellera au ${contact.telephone}.`,
-    });
-    setNatureIntervention([]); setTypeDemande([]); setTypeDemandeAutre("");
-    setTypeBatiment([]); setBatimentAutre(""); setPuissance([]); setPuissanceAutre("");
-    setSurface(""); setHauteur(""); setTravauxInstall([]); setTravauxDepannage([]);
-    setDepannageAutre(""); setJours([]); setCreneaux([]); setAutreCreneaux("");
-    reset();
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "devis-electricite",
+          nom: contact.nom,
+          prenom: contact.prenom,
+          email: contact.email,
+          telephone: contact.telephone,
+          adresse: contact.adresse,
+          details: payload,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Erreur lors de l'envoi");
+      }
+
+      toast.success("Demande envoyée ! Nous vous contactons sous 24h.", {
+        description: `Un électricien vous rappellera au ${contact.telephone}.`,
+      });
+      setNatureIntervention([]); setTypeDemande([]); setTypeDemandeAutre("");
+      setTypeBatiment([]); setBatimentAutre(""); setPuissance([]); setPuissanceAutre("");
+      setSurface(""); setHauteur(""); setTravauxInstall([]); setTravauxDepannage([]);
+      setDepannageAutre(""); setJours([]); setCreneaux([]); setAutreCreneaux("");
+      reset();
+    } catch (err: any) {
+      toast.error("Erreur d'envoi : " + (err.message || "Veuillez réessayer plus tard."));
+    }
   };
 
   return (

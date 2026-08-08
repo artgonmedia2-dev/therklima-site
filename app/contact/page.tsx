@@ -24,10 +24,30 @@ export default function ContactPage() {
   });
 
   const onSubmit = async (data: FormData) => {
-    await new Promise((r) => setTimeout(r, 1000));
-    console.log("Contact form:", data);
-    toast.success("Message envoyé ! Nous vous répondons sous 24h.");
-    reset();
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "contact",
+          nom: data.nom,
+          email: data.email,
+          telephone: data.telephone,
+          sujet: data.sujet,
+          message: data.message,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Erreur lors de l'envoi");
+      }
+
+      toast.success("Message envoyé ! Nous vous répondons sous 24h.");
+      reset();
+    } catch (err: any) {
+      toast.error("Erreur d'envoi : " + (err.message || "Veuillez réespérer plus tard."));
+    }
   };
 
   return (
