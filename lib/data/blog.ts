@@ -1,14 +1,23 @@
-export const BLOG_ARTICLES = [
+import { METIER_META, type BlogArticle, type BlogArticleSource } from "./blog-types";
+import prixVmcDoubleFlux from "./articles/prix-vmc-double-flux";
+import diagnosticElectriqueVenteLocation from "./articles/diagnostic-electrique-vente-location";
+import pompeAChaleurAppartementParis from "./articles/pompe-a-chaleur-appartement-paris";
+import climatisationReversibleOuPompeAChaleurAirAir from "./articles/climatisation-reversible-ou-pompe-a-chaleur-air-air";
+import climatisationCoproprieteParis from "./articles/climatisation-copropriete-paris";
+import entretienClimatisationPompeAChaleurObligatoire from "./articles/entretien-climatisation-pompe-a-chaleur-obligatoire";
+import prixChangementTableauElectrique from "./articles/prix-changement-tableau-electrique";
+import entretienChaudiereObligatoire from "./articles/entretien-chaudiere-obligatoire";
+import fuiteEauQueFaire from "./articles/fuite-eau-que-faire";
+import chauffeEauNeChauffePlus from "./articles/chauffe-eau-ne-chauffe-plus";
+
+const LEGACY_ARTICLES: BlogArticleSource[] = [
   {
-    id: 1,
     slug: "guide-pac-2026",
     title: "Guide complet : Pompe à Chaleur 2026 — Aides, Installation & Économies",
     excerpt: "Tout ce que vous devez savoir sur les pompes à chaleur en 2026 : types, coûts, aides MaPrimeRénov', CEE et retour sur investissement.",
     metier: "pac",
-    metierName: "Pompe à Chaleur",
-    metierColor: "#4caf50",
-    readTime: "8 min",
     date: "2026-05-15",
+    updated: "2026-10-01",
     image: "/blog/pac-guide.jpeg",
     alt: "Pompe à chaleur air-eau installée à l'extérieur d'une maison",
     content: `
@@ -28,26 +37,26 @@ Produit de l'eau chaude pour alimenter les radiateurs existants ET l'eau chaude 
 
 ## Les aides en 2026
 
-- **MaPrimeRénov'** : de 30% à 65% selon vos revenus
-- **CEE** : bonus supplémentaire de 500€ à 2 000€
-- **Éco-PTZ** : prêt à taux zéro jusqu'à 50 000€
+- **MaPrimeRénov'** : montant variable selon vos revenus et l'équipement (PAC air-eau notamment)
+- **CEE** : primes versées par les fournisseurs d'énergie, cumulables sous conditions
+- **Éco-PTZ** : prêt à taux zéro pour financer le reste à charge
+
+Les barèmes changent chaque année : vérifiez votre éligibilité sur [france-renov.gouv.fr](https://france-renov.gouv.fr). Pour en bénéficier, l'installation doit être réalisée par un artisan RGE.
 
 ## Rentabilité
 
 Une PAC air-eau consomme 3 à 4x moins d'électricité qu'une chaudière électrique. Retour sur investissement typique : 5 à 8 ans.
     `,
+    keywords: ["pompe à chaleur 2026", "PAC air-eau", "PAC air-air", "aides pompe à chaleur"],
     tags: ["PAC", "MaPrimeRénov", "Économies d'énergie", "Rénovation"],
   },
   {
-    id: 2,
     slug: "conformite-electrique-norme-c15100",
     title: "Mise en conformité électrique : tout comprendre sur la norme NF C 15-100",
     excerpt: "La norme NF C 15-100 régit toutes les installations électriques résidentielles en France. Découvrez ce qu'elle impose et comment se mettre en conformité.",
     metier: "electricite",
-    metierName: "Électricité",
-    metierColor: "#ff8c00",
-    readTime: "6 min",
     date: "2026-04-20",
+    updated: "2026-10-01",
     image: "/blog/elec-norme.jpeg",
     alt: "Tableau électrique avec disjoncteurs différentiels modernes",
     content: `
@@ -59,7 +68,7 @@ Une installation électrique vétuste représente un risque d'incendie ou d'éle
 
 ## Ce que la norme impose
 
-- Disjoncteur différentiel 30mA dans chaque circuit
+- Protection de tous les circuits par des interrupteurs différentiels 30 mA
 - Mise à la terre de toutes les prises
 - Liaisons équipotentielles dans les salles d'eau
 - Circuit dédié pour les gros électroménagers
@@ -73,22 +82,18 @@ Une installation électrique vétuste représente un risque d'incendie ou d'éle
 
 ## Coût moyen
 
-Entre 1 500€ et 5 000€ pour un appartement selon son état.
+De 2 025 € à 6 750 € selon l'état de l'installation et la surface (voir [nos tarifs](/tarifs)). Avant une vente ou une location, lisez aussi notre article sur le [diagnostic électrique obligatoire](/blog/diagnostic-electrique-vente-location).
     `,
+    keywords: ["norme NF C 15-100", "mise en conformité électrique", "installation électrique vétuste"],
     tags: ["Électricité", "NF C 15-100", "Conformité", "Sécurité"],
   },
   {
-    id: 3,
     slug: "vmc-double-flux-avantages",
     title: "VMC Double Flux : pourquoi c'est la meilleure solution pour votre maison",
     excerpt: "La VMC double flux améliore la qualité de l'air tout en récupérant la chaleur. Découvrez ses avantages, son coût et ses économies.",
     metier: "ventilation",
-    metierName: "Ventilation",
-    metierColor: "#9c27b0",
-    readTime: "5 min",
     date: "2026-03-10",
-    image: "/blog/vmc-double-flux.jpeg",
-    alt: "Caisson VMC double flux avec échangeur thermique",
+    updated: "2026-10-01",
     content: `
 # VMC Double Flux : tout ce qu'il faut savoir
 
@@ -110,8 +115,36 @@ La VMC double flux extrait l'air vicié de votre logement et insuffle de l'air f
 
 ## Coût d'installation
 
-Entre 3 000€ et 6 000€ fourni et posé selon la surface.
+De 4 725 € à 9 450 € fourni et posé pour une maison, selon la surface et le réseau de gaines (voir [nos tarifs](/tarifs) et notre [guide des prix de la VMC double flux](/blog/prix-vmc-double-flux)).
     `,
+    keywords: ["VMC double flux avantages", "VMC double flux", "qualité de l'air intérieur"],
     tags: ["VMC", "Ventilation", "Qualité d'air", "Économies"],
   },
 ];
+
+const SOURCES: BlogArticleSource[] = [
+  prixVmcDoubleFlux,
+  diagnosticElectriqueVenteLocation,
+  pompeAChaleurAppartementParis,
+  climatisationReversibleOuPompeAChaleurAirAir,
+  climatisationCoproprieteParis,
+  entretienClimatisationPompeAChaleurObligatoire,
+  prixChangementTableauElectrique,
+  entretienChaudiereObligatoire,
+  fuiteEauQueFaire,
+  chauffeEauNeChauffePlus,
+  ...LEGACY_ARTICLES,
+];
+
+function readTime(content: string) {
+  const words = content.split(/\s+/).filter(Boolean).length;
+  return `${Math.max(2, Math.round(words / 200))} min`;
+}
+
+/** Newest first. */
+export const BLOG_ARTICLES: BlogArticle[] = SOURCES.map((a) => ({
+  ...a,
+  metierName: METIER_META[a.metier].name,
+  metierColor: METIER_META[a.metier].color,
+  readTime: readTime(a.content),
+})).sort((a, b) => b.date.localeCompare(a.date));
